@@ -7,15 +7,15 @@ public class PlayerMovement : MonoBehaviour
 
     public Rigidbody rb;
 
+    public float thrustSpeed;
+    public float maxRotationSpeed;
+    private float rotationSpeed;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
-
-    public float thrustSpeed;
-    public float maxRotationSpeed;
-    private float rotationSpeed;
-    // Update is called once per frame
+        
     void FixedUpdate()
     {
         // Hvis vi bare flyver fremad
