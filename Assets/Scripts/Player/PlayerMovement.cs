@@ -5,66 +5,66 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 
-    public float Speed = 6f;
+    public Rigidbody rb;
 
-    private Vector3 movement;
-    private Animator anim;
-    private Rigidbody playerRigidbody;
-    private int floorMask;
-    private float camRayLength = 100f;
-
-
-	void Awake ()
-	{
-	    floorMask = LayerMask.GetMask("Floor");
-
-	    playerRigidbody = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
-
-	}
-	
-	
-	void FixedUpdate ()
-	{
-	    float h = Input.GetAxisRaw("Horizontal");
-	    float v = Input.GetAxisRaw("Vertical");
-
-	    Move(h, v);
-	    Turning();
-        Animating(h, v);
-
-	}
-    
-    void Move(float h, float v)
+    void Start()
     {
-        movement.Set(h, 0f, v);
-        movement = movement.normalized * Speed * Time.deltaTime;
-
-        playerRigidbody.MovePosition(transform.position + movement);
+        rb = GetComponent<Rigidbody>();
     }
 
-    void Turning()
+    public float thrustSpeed;
+    public float maxRotationSpeed;
+    private float rotationSpeed;
+    // Update is called once per frame
+    void FixedUpdate()
     {
-        Ray camRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        RaycastHit floorHit;
-
-        // Returns true if it hits anything
-        if (Physics.Raycast(camRay, out floorHit, camRayLength, floorMask))
+        // Hvis vi bare flyver fremad
+        if (Input.GetKey("w"))
         {
-            Vector3 playerToMouse = floorHit.point - transform.position;
-            playerToMouse.y = 0f;
+            //Sættes rotationsacceleration til 75 %
+            rotationSpeed = maxRotationSpeed * 0.5f;
+            Thrust();
+        }
 
-            Quaternion newRotation = Quaternion.LookRotation(playerToMouse);
-            playerRigidbody.MoveRotation(newRotation);
+        if (Input.GetKey("s"))
+        {
+            rotationSpeed = maxRotationSpeed * 1.20f;
+            Thrust(false);
+        }
+
+
+        //Hvis der drejes og vi flyver bagud, så roterer vi maksimalt
+        if (Input.GetAxis("Horizontal") != 0)
+        {
+            Rotate();
+            rotationSpeed = maxRotationSpeed;
+        }
+        else
+            rotationSpeed = maxRotationSpeed;
+        Rotate(false);
+        {
+
         }
     }
 
-    // Ready for animations!
-    void Animating(float h, float v)
+    void Thrust(bool forward = true)
     {
-        bool running = h != 0f || v != 0f;
-        anim.SetBool("Running", running);
+        if (forward == true)
+        {
+            rb.AddRelativeForce(Vector3.right * thrustSpeed * 1000);
+        }
+        else
+        {
+            rb.AddRelativeForce(-(Vector3.right * thrustSpeed * 500));
+        }
+    }
+
+    void Rotate(bool enabled = true)
+    {
+        if (enabled == true)
+        {
+            rb.AddRelativeTorque(0, 0, Input.GetAxis("Horizontal") * rotationSpeed * 1000);
+        }
     }
 
 }
