@@ -34,7 +34,7 @@ public class PlayerMovement : MonoBehaviour
 
 
         //Hvis der drejes og vi flyver bagud, så roterer vi maksimalt
-        if (Input.GetAxis("Horizontal") != 0)
+        if (Input.GetAxis("Horizontal1") != 0)
         {
             Rotate();
             rotationSpeed = maxRotationSpeed;
@@ -63,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (enabled == true)
         {
-            rb.AddRelativeTorque(0, 0, Input.GetAxis("Horizontal") * rotationSpeed * 1000);
+            rb.AddRelativeTorque(0, 0, Input.GetAxis("Horizontal1") * rotationSpeed * 1000);
         }
     }
 
